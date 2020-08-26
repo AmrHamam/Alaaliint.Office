@@ -20,11 +20,23 @@ namespace Alaaliint.Office.Outlook.SubjectSelector
         {
         }
 
-        public SubjectTopic(string Code, string Title)
+        public SubjectTopic(int id ,string Code, string Title)
         {
+            this.ID = id;
             this.Code = Code;
             this.Title = Title;
            
+        }
+        private int _ID;
+        public int ID
+        {
+            get { return _ID; }
+            set
+            {
+                _ID = value;
+                // Call OnPropertyChanged whenever the property is updated
+                OnPropertyChanged();
+            }
         }
         private string _Code;
         public string Code

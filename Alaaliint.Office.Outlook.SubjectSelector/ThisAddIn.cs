@@ -31,19 +31,19 @@ namespace Alaaliint.Office.Outlook.SubjectSelector
                 new Microsoft.Office.Interop.Outlook.InspectorsEvents_NewInspectorEventHandler(Inspectors_NewInspector);
 
 
-            this.Application.ItemSend += 
+            this.Application.ItemSend +=
                 new Microsoft.Office.Interop.Outlook.ApplicationEvents_11_ItemSendEventHandler(Application_ItemSend);
-            
+
             Reset();
         }
 
         void Application_ItemSend(object Item, ref bool Cancel)
         {
-       
+
             Microsoft.Office.Interop.Outlook.MailItem mail = Item as Microsoft.Office.Interop.Outlook.MailItem;
             if (mail != null)
             {
-               if (this.CheckUser(mail))
+                if (this.CheckUser(mail))
                     this.UpdateEmailStatusTitle(mail.Subject, "Comfirmed");
             }
         }
@@ -99,7 +99,7 @@ namespace Alaaliint.Office.Outlook.SubjectSelector
         {
             try
             {
-                
+
                 if (mailItem != null)
                 {
                     if (mailItem.EntryID == null)
@@ -160,6 +160,7 @@ namespace Alaaliint.Office.Outlook.SubjectSelector
 
                     clientContext.Load(collListItem,
                         items => items.Include(
+                        item => item.Id,
                         item => item["Title"],
                         item => item["Code"]));
 
@@ -171,7 +172,7 @@ namespace Alaaliint.Office.Outlook.SubjectSelector
                     {
                         SubjectTopicList.Add(new SubjectTopic()
                         {
-
+                            ID = oListItem.Id,
                             Title = oListItem["Title"].ToString(),
                             Code = oListItem["Code"].ToString()
                         });
@@ -199,6 +200,7 @@ namespace Alaaliint.Office.Outlook.SubjectSelector
 
                     clientContext.Load(collListItem,
                         items => items.Include(
+                        item => item.Id,
                         item => item["Title"],
                         item => item["Parent"],
                         item => item["Code"]));
@@ -209,12 +211,20 @@ namespace Alaaliint.Office.Outlook.SubjectSelector
 
                     foreach (ListItem oListItem in collListItem)
                     {
+                        string codeValue = "";
+                        var s = GetSubjectTopicById(((Microsoft.SharePoint.Client.FieldLookupValue)oListItem["Parent"]).LookupId);
+                        if (s != null)
+                            codeValue = s.Code;
                         SubjectTypeList.Add(new SubjectType()
                         {
+
+                            ID = oListItem.Id,
                             Title = oListItem["Title"].ToString(),
                             Code = oListItem["Code"].ToString(),
-                            Parent = new SubjectTopic(((Microsoft.SharePoint.Client.FieldLookupValue)oListItem["Parent"]).LookupId.ToString(),
-                            ((Microsoft.SharePoint.Client.FieldLookupValue)oListItem["Parent"]).LookupValue.ToString())
+                            Parent = new SubjectTopic(
+                                ((Microsoft.SharePoint.Client.FieldLookupValue)oListItem["Parent"]).LookupId,
+                                codeValue,
+                              ((Microsoft.SharePoint.Client.FieldLookupValue)oListItem["Parent"]).LookupValue.ToString())
                         });
 
                     }
@@ -231,10 +241,10 @@ namespace Alaaliint.Office.Outlook.SubjectSelector
         {
             try
             {
-              
 
-                    Microsoft.Office.Interop.Outlook.AddressEntry addrEntry =
-                        mailItem.SendUsingAccount.CurrentUser.AddressEntry;
+
+                Microsoft.Office.Interop.Outlook.AddressEntry addrEntry =
+                    mailItem.SendUsingAccount.CurrentUser.AddressEntry;
 
                 if (addrEntry.Type == "EX")
                 {
@@ -246,7 +256,7 @@ namespace Alaaliint.Office.Outlook.SubjectSelector
                         return currentUser;
                     }
                 }
-                
+
                 return null;
             }
             catch (Exception ex)
@@ -310,9 +320,6 @@ namespace Alaaliint.Office.Outlook.SubjectSelector
             }
         }
 
-
-      
-
         private User getEnsureUser(Microsoft.Office.Interop.Outlook.MailItem mailItem)
         {
             try
@@ -370,7 +377,7 @@ namespace Alaaliint.Office.Outlook.SubjectSelector
                 throw new Exception(ex.ToString());
             }
         }
-        public string InsertEmailSubjectSerial(string subject ,string status,SubjectTopic subjectTopicValue,SubjectType subjectTypeValue, Microsoft.Office.Interop.Outlook.MailItem mailItem)
+        public string InsertEmailSubjectSerial(string subject, string status, SubjectTopic subjectTopicValue, SubjectType subjectTypeValue, Microsoft.Office.Interop.Outlook.MailItem mailItem)
         {
             try
             {
@@ -387,14 +394,17 @@ namespace Alaaliint.Office.Outlook.SubjectSelector
                     ListItem oListItem = oList.AddItem(itemCreateInfo);
 
                     // type section//////////////////////////////////////
-                    FieldLookupValue typeFieldLookupValue = GetLookupFieldValue(subjectTypeValue.Title, "EmailSubject_Types");
+                    FieldLookupValue typeFieldLookupValue = new FieldLookupValue();  //GetLookupFieldValue(subjectTypeValue.Title, "EmailSubject_Types");
+                    typeFieldLookupValue.LookupId = subjectTypeValue.ID;
                     if (typeFieldLookupValue != null)
                     {
                         oListItem["ParentType"] = typeFieldLookupValue;
                     }
                     ////////////////////////////////////////////////////////////////
                     // tpoic section//////////////////////////////////////
-                    FieldLookupValue topicFieldLookupValue = GetLookupFieldValue(subjectTopicValue.Title, "EmailSubject_Topics");
+                    FieldLookupValue topicFieldLookupValue = new FieldLookupValue();
+                    topicFieldLookupValue.LookupId = subjectTopicValue.ID;
+                    //FieldLookupValue topicFieldLookupValue = GetLookupFieldValue(subjectTopicValue.Title, "EmailSubject_Topics");
                     if (topicFieldLookupValue != null)
                     {
                         oListItem["ParentTopic"] = topicFieldLookupValue;
@@ -413,7 +423,7 @@ namespace Alaaliint.Office.Outlook.SubjectSelector
                     oListItem["User"] = _userValue;
                     ///////////////////////////////////////////////////////////////
                     // title section///////////////////////////////////////////////
-                    oListItem["Title"] =  g.ToString();
+                    oListItem["Title"] = g.ToString();
                     ////////////////////////////////////////////////////////////////
                     oListItem.Update();
 
@@ -428,7 +438,7 @@ namespace Alaaliint.Office.Outlook.SubjectSelector
                     oListItem.Update();
 
                     clientContext.ExecuteQuery();
-                   
+
                     return subjectToReturn;
                 }
             }
@@ -438,7 +448,7 @@ namespace Alaaliint.Office.Outlook.SubjectSelector
                 throw new Exception(ex.ToString());
             }
         }
-       
+
         public static FieldLookupValue GetLookupFieldValue(string lookupName, string lookupListName)
         {
             string siteUrl = Properties.Settings.Default.ClientContextUrl;
@@ -468,9 +478,9 @@ namespace Alaaliint.Office.Outlook.SubjectSelector
 
                 return null;
             }
-            
+
         }
-        private void UpdateEmailStatusTitle(string title,string status)
+        private void UpdateEmailStatusTitle(string title, string status)
         {
             string siteUrl = Properties.Settings.Default.ClientContextUrl;
             using (var clientContext = new AuthenticationManager().GetAppOnlyAuthenticatedContext(siteUrl, Properties.Settings.Default.ClientId, Properties.Settings.Default.ClientSecret))
@@ -488,12 +498,36 @@ namespace Alaaliint.Office.Outlook.SubjectSelector
                     ListItem item = collListItem[0];
                     item["Status"] = status;
                     item.Update();
-                    clientContext.ExecuteQuery(); 
+                    clientContext.ExecuteQuery();
                 }
 
-               
+
             }
-              
+
+        }
+
+        private SubjectTopic GetSubjectTopicById(int id)
+        {
+            foreach (SubjectTopic item in SubjectTopicList)
+            {
+                if (id == item.ID)
+                {
+                    return item;
+                }
+            }
+            return null;
+        }
+
+        private SubjectType GetSubjectTypeById(int id)
+        {
+            foreach (SubjectType item in SubjectTypeList)
+            {
+                if (id == item.ID)
+                {
+                    return item;
+                }
+            }
+            return null;
         }
     }
 }
