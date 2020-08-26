@@ -1,0 +1,38 @@
+﻿<?xml version='1.0'?>
+<!-- This file represents a fragment of a book store inventory database -->
+<SubjectList>
+	<Subject>
+		<label-value>
+			label-value 1
+		</label-value>
+		<subject-value>
+			subject-value 1
+		</subject-value>
+	</Subject>
+	<Subject>
+		<label-value>
+			label-value 5
+		</label-value>
+		<subject-value>
+			subject-value 4
+		</subject-value>
+	</Subject>
+
+	<Subject>
+		<label-value>
+			label-value 2
+		</label-value>
+		<subject-value>
+			subject-value 2
+		</subject-value>
+	</Subject>
+
+	<Subject>
+		<label-value>
+			label-value 3
+		</label-value>
+		<subject-value>
+			subject-value 3
+		</subject-value>
+	</Subject>
+</SubjectList>
