@@ -1152,7 +1152,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:OfficeAddInSetup"
         "ProductCode" = "8:{27640F98-2A44-414F-877B-4AD2D914F216}"
-        "PackageCode" = "8:{0918854C-04DB-4D85-8C49-6D5A24F6434C}"
+        "PackageCode" = "8:{5C10277C-88BE-4934-A9EE-890DFCAC87C6}"
         "UpgradeCode" = "8:{C3FE32D5-EBD8-47AC-9A5D-3753D8DA097E}"
         "AspNetVersion" = "8:"
         "RestartWWWService" = "11:FALSE"
@@ -1307,7 +1307,7 @@
                                                                     "Condition" = "8:"
                                                                     "Transitive" = "11:FALSE"
                                                                     "ValueTypes" = "3:1"
-                                                                    "Value" = "8:Outlook Demo AddIn"
+                                                                    "Value" = "8:Office Outlook AddIn"
                                                                     }
                                                                     "{ADCFDA98-8FDD-45E4-90BC-E3D20B029870}:_E8200187E9CE4692B6BBC883DEF97A9C"
                                                                     {
@@ -1315,7 +1315,7 @@
                                                                     "Condition" = "8:"
                                                                     "Transitive" = "11:FALSE"
                                                                     "ValueTypes" = "3:1"
-                                                                    "Value" = "8:Outlook Demo AddIn"
+                                                                    "Value" = "8:Office Outlook AddIn"
                                                                     }
                                                                     "{ADCFDA98-8FDD-45E4-90BC-E3D20B029870}:_F09D548B75434FCBAB0B97E3337B3CC9"
                                                                     {
