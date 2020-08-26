@@ -250,7 +250,6 @@
     <Compile Include="RibbonSubjectSelector.Designer.cs">
       <DependentUpon>RibbonSubjectSelector.cs</DependentUpon>
     </Compile>
-    <Compile Include="StringCipher.cs" />
     <Compile Include="SubjectData.cs" />
     <Compile Include="ThisAddIn.cs">
       <SubType>Code</SubType>
